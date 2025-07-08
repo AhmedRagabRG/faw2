@@ -77,18 +77,25 @@ export class BookService {
         throw new Error("Book out of stock");
       }
 
+      if (address === undefined) {
+        throw new Error("Address is required");
+      }
+
       if (quantity > (book as IPaperBook).stock) {
         throw new Error("Not enough stock");
       }
 
       (book as IPaperBook).stock -= quantity;
-      console.log(`Bought book '${book.title}' ISBN ${book.isbn} Price: ${book.price} Quantity: ${quantity}`);
+      console.log(`Bought paper book '${book.title}' ISBN ${book.isbn} Price: ${book.price} Quantity: ${quantity}`);
       const shippingService = new ShippingService();
-      shippingService.ship(book as IPaperBook, address || "");
+      shippingService.ship(book as IPaperBook, address);
     } else if (book.type === BookType.EBOOK) {
+      if (email === undefined) {
+        throw new Error("Email is required");
+      }
       console.log(`Bought ebook '${book.title}' ISBN ${book.isbn}`);
       const mailService = new MailService();
-      mailService.send(book as IEbook, email || "");
+      mailService.send(book as IEbook, email);
     }
   }
 }
